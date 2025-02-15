@@ -1,0 +1,27 @@
+#name: Golang
+#on:
+#  push:
+#    branches:
+#      - '*'
+#
+#jobs:
+#  testing:
+#    runs-on: ubuntu-22.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Go
+#        uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.22.0'
+#
+#      - name: Run Go linter
+#        uses: golangci/golangci-lint-action@v6
+#        with:
+#          version: v1.63.4
+#
+#      - name: Run unit tests
+#        run: |
+#          make go-unit-testing

@@ -1,0 +1,138 @@
+run:
+  timeout: 10m
+
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - (*database/sql.DB).Close
+      - (*database/sql.Rows).Close
+      - (*database/sql.Tx).Rollback
+#      - (*github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka.Producer).ProduceMadeMessage
+      - (net/http.ResponseWriter).Write
+
+    check-type-assertions: true
+
+  gci:
+    sections:
+      - standard
+      - default
+      - Prefix(github.com/Oxygenta-Team/FortiKey)
+      - blank
+      - alias
+
+    skip-generated: true
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+
+    disabled-checks:
+      - appendAssign
+      - commentedOutCode
+      - hugeParam
+      - regexpMust
+      - singleCaseSwitch
+      - sloppyReassign
+      - unnamedResult
+
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+      - unusedwrite
+    settings:
+      shadow:
+        strict: true
+
+  perfsprint:
+    int-conversion: false
+    sprintf1: false
+    strconcat: false
+
+  rowserrcheck:
+    packages:
+      - github.com/jmoiron/sqlx
+
+  stylecheck:
+    initialisms: [ "ACL", "API", "ASCII", "CPU", "CSS", "DNS", "EOF", "GUID", "HTML", "HTTP", "HTTPS", "ID", "IP", "JSON", "QPS", "RAM", "RPC", "SLA", "SMTP", "SSH", "TCP", "TLS", "TTL", "UDP", "UI", "GID", "UID", "UUID", "URI", "URL", "UTF8", "VM", "XML", "XMPP", "XSRF", "XSS", "SIP", "RTP", "AMQP", "DB", "TS" ]
+
+  testifylint:
+    disable:
+      - require-error
+
+linters:
+  disable-all: true
+  enable:
+    ## enabled by default
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    ## additional
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - contextcheck
+    - copyloopvar
+    - durationcheck
+    - errorlint
+    - forbidigo
+    - gci
+    - goconst
+    - gocritic
+    - gofmt
+    - intrange
+    - misspell
+    - musttag
+    - nilerr
+    - nilnil
+    - perfsprint
+    - prealloc
+    - predeclared
+    - reassign
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - stylecheck
+    - tenv
+    - testableexamples
+    - testifylint
+    - unconvert
+    - usestdlibvars
+    - wastedassign
+
+issues:
+  exclude-dirs:
+    - vendor
+
+  exclude-rules:
+    - linters:
+        - revive
+      text: 'var-naming: method ToSql should be ToSQL'
+    - linters:
+        - govet
+      text: 'shadow: declaration of "[^e].*" shadows declaration'  # Variables not starting with 'e'
+    - linters:
+        - govet
+      text: 'shadow: declaration of "e[^r].*" shadows declaration'  # Variables starting with 'e' but not 'er'
+    - linters:
+        - govet
+      text: 'shadow: declaration of "er[^r].*" shadows declaration'  # Variables starting with 'er' but not 'err'
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+  new: false
+
+output:
+  print-issued-lines: false
+  sort-results: true
