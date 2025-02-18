@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS secrets(
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    key VARCHAR(255) NOT NULL,
+    hash BYTEA NOT NULL,
+    is_deleted BOOLEAN DEFAULT false
+);
