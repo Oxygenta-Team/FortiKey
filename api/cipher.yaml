@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /secret:
+    post:
+      tags:
+        - secret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/Secret'
+        required: true
+      responses:
+        '200':
+          description: Successfully saved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Secret'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Status code
+        message:
+          type: string
+          description: Error description
+
+    Secret:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          description: Key for saving (login or email)
+        value:
+          type: string
+          writeOnly: true
+          description: data to secreting
