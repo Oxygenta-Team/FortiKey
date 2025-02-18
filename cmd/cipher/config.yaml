@@ -5,3 +5,5 @@ database:
   password: postgres
   dbname: mydb
   sslmode: disable
+
+addr: ':1221'

@@ -11,7 +11,7 @@ type Services struct {
 }
 
 type SecretSvc interface {
-	InsertSecret(ctx context.Context, secret []*models.Secret) error
+	CreateSecret(ctx context.Context, secret []*models.Secret) error
 	// TODO make `FetchSecret` with filters
 	GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error)
 	GetSecretByKey(ctx context.Context, key string) (*models.Secret, error)

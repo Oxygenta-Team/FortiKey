@@ -9,6 +9,10 @@ import (
 type RepoManager struct {
 }
 
-func (r RepoManager) NewSecretRepo(db sqlx.ExtContext) repository.SecretRepo {
+func NewRepoManager() *RepoManager {
+	return &RepoManager{}
+}
+
+func (r *RepoManager) NewSecretRepo(db sqlx.ExtContext) repository.SecretRepo {
 	return NewSecretRepo(db)
 }
