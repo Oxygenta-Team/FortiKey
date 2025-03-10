@@ -4,11 +4,26 @@ services:
     container_name: go_db
     restart: on-failure:5
     environment:
-      POSTGRES_USER: null
-      POSTGRES_PASSWORD: null
-      POSTGRES_DB: null
-      POSTGRES_HOST: null
-      POSTGRES_PORT: null
-      POSTGRES_SSL_MODE: null
+      POSTGRES_USER: "dev"
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: "cipher"
+#      POSTGRES_USER: null
+#      POSTGRES_PASSWORD: null
+#      POSTGRES_DB: null
+#      POSTGRES_HOST: null
+#      POSTGRES_PORT: null
+#      POSTGRES_SSL_MODE: null
     ports:
-      - $POSTGRES_PORT:5432
+#      - $POSTGRES_PORT:5432
+      - 5432:5432
+  cipher:
+    build:
+      context: .
+      dockerfile: ./cmd/cipher/Dockerfile
+    volumes:
+      - ./cmd/cipher/config.yaml:/configs/config.yaml:ro
+    command:
+      - config-path
+      - /configs/config.yaml
+    ports:
+      - 1221:1221
