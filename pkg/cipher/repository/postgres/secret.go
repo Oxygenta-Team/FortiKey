@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/lib/pq"
 
 	"github.com/jmoiron/sqlx"
 
@@ -22,13 +23,17 @@ func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.S
 	insert := sq.
 		Insert("secrets").
 		Columns(`
+			user_id,			
 			key,
+			method,
 			hash
 		`)
 	for _, secret := range secrets {
 		insert = insert.Values(
+			secret.UserID,
 			secret.Key,
-			secret.Hash,
+			secret.Method,
+			pq.Array(secret.Hash),
 		)
 	}
 	q, args, err := insert.Prefix("RETURNING id").PlaceholderFormat(sq.Dollar).ToSql()
@@ -53,8 +58,10 @@ func (s *SecretRepository) GetSecretByID(ctx context.Context, id uint64) (*model
 	q, args, err := sq.
 		Select(`
 			s.id, 
+			s.user_id,
 			s.key,
-			s.hash
+			s.method,
+			s.hash,
 		`).
 		From("secrets s").
 		Where(sq.Eq{
@@ -77,7 +84,9 @@ func (s *SecretRepository) GetSecretByID(ctx context.Context, id uint64) (*model
 func (s *SecretRepository) GetSecretByKey(ctx context.Context, key string) (*models.Secret, error) {
 	q, args, err := sq.Select(`
 			s.id, 
+			s.user_id,
 			s.key,
+			s.method,
 			s.hash
 		`).
 		From("secrets s").
