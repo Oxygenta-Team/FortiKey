@@ -19,13 +19,14 @@ var defaultPath = "./config.yaml"
 var temporalPort = ":1221"
 
 func main() {
-	dbConfig, err := cfg.ParseDBConfig(defaultPath)
+	var config config
+	err := cfg.UnmarshalYAML(defaultPath, &config)
 	if err != nil {
 		log.Fatalf("error during creation config, err: %s", err)
 		return
 	}
 
-	storage, err := pg.CreateStorage(dbConfig)
+	storage, err := pg.CreateStorage(&config.DB)
 	if err != nil {
 		log.Fatalf("error during creation storage(db), err: %s", err)
 		return
