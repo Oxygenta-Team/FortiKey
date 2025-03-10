@@ -4,30 +4,41 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Oxygenta-Team/FortiKey/pkg/db"
-
 	"github.com/jmoiron/sqlx"
-
 	_ "github.com/lib/pq"
 )
 
-type Storage struct {
-	*sqlx.DB
+type Database struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
+	SSLMode  string `yaml:"sslmode"`
 }
 
-func CreateStorage(dbConfig *db.Config) (*Storage, error) {
-	dsn := dbConfig.DNS()
+type Storage struct {
+	db *sqlx.DB
+}
 
-	connect, err := sqlx.Connect("postgres", dsn)
+func CreateStorage(dbConfig *Database) (*Storage, error) {
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		dbConfig.Host, dbConfig.Port, dbConfig.User,
+		dbConfig.Password, dbConfig.DBName, dbConfig.SSLMode,
+	)
+
+	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to the database: %s", err)
+		return nil, fmt.Errorf("failed to connect to the database: %w", err)
 	}
 
 	// TODO: IN THE FUTURE, USE A LOGGER!!!
 	log.Println("Successfully connected to the database!")
-	return &Storage{DB: connect}, nil
+
+	return &Storage{db: db}, nil
 }
 
 func (p *Storage) Close() error {
-	return p.DB.Close()
+	return p.db.Close()
 }

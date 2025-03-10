@@ -1,22 +1,21 @@
-package cfg
+package db
 
 import (
 	"os"
 
-	"gopkg.in/yaml.v3"
+	"github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
 
-	"github.com/Oxygenta-Team/FortiKey/pkg/db"
+	"gopkg.in/yaml.v3"
 )
 
-// PROBLEM HERE
-func ParseDBConfig(path string) (*db.Config, error) {
+func ParseDBConfig(path string) (*postgres.Database, error) {
 	fileData, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-
+		
 	var settings struct {
-		Database db.Config `yaml:"database"`
+		Database postgres.Database `yaml:"database"`
 	}
 
 	if err := yaml.Unmarshal(fileData, &settings); err != nil {

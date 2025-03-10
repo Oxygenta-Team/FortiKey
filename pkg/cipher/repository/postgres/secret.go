@@ -19,8 +19,7 @@ func NewSecretRepo(db sqlx.ExtContext) *SecretRepository {
 }
 
 func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.Secret) error {
-	insert := sq.
-		Insert("secrets").
+	insert := sq.Insert("secrets").
 		Columns(`
 			key,
 			hash
@@ -50,8 +49,7 @@ func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.S
 }
 
 func (s *SecretRepository) GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error) {
-	q, args, err := sq.
-		Select(`
+	q, args, err := sq.Select(`
 			s.id, 
 			s.key,
 			s.hash
@@ -99,8 +97,7 @@ func (s *SecretRepository) GetSecretByKey(ctx context.Context, key string) (*mod
 }
 
 func (s *SecretRepository) DeleteSecret(ctx context.Context, ids []uint64) error {
-	q, args, err := sq.Update("secrets s").
-		Set("s.is_deleted", false).
+	q, args, err := sq.Update("secrets s").Set("s.is_deleted", false).
 		Where(sq.Eq{
 			"s.is_deleted": true,
 			"s.id":         ids,
