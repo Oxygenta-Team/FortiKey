@@ -18,4 +18,5 @@ type SecretRepo interface {
 	GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error)
 	GetSecretByKey(ctx context.Context, key string) (*models.Secret, error)
 	DeleteSecret(ctx context.Context, ids []uint64) error
+	CompareSecret(ctx context.Context, keyValue *models.KeyValue) (bool, error)
 }
