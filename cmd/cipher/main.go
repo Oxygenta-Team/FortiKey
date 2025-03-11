@@ -22,6 +22,7 @@ func main() {
 	var config config
 	err := cfg.UnmarshalYAML(defaultPath, &config)
 	if err != nil {
+		// TODO Change logger
 		log.Fatalf("error during creation config, err: %s", err)
 		return
 	}

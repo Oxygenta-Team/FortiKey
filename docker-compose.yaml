@@ -1,14 +1,28 @@
 services:
   db:
     image: postgres:16.7-alpine3.20
-    container_name: go_db
+    container_name: cipher-postgres
     restart: on-failure:5
     environment:
-      POSTGRES_USER: null
-      POSTGRES_PASSWORD: null
-      POSTGRES_DB: null
-      POSTGRES_HOST: null
-      POSTGRES_PORT: null
-      POSTGRES_SSL_MODE: null
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_SSL_MODE: disable
     ports:
-      - $POSTGRES_PORT:5432
+      - 5431:5432
+
+  user_db:
+    image: postgres:16.7-alpine3.20
+    container_name: user-management-postgres
+    restart: on-failure:5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_SSL_MODE: disable
+    ports:
+      -  5432:5432
