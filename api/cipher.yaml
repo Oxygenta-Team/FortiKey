@@ -31,7 +31,29 @@ paths:
           content:
             application/json:
               schema:
-                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - secret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyValue'
+        required: true
+      responses:
+        '200':
+          description: Possible to compare
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
                 items:
                   $ref: '#/components/schemas/Error'
 
@@ -60,3 +82,11 @@ components:
           type: string
           writeOnly: true
           description: data to secreting
+
+    KeyValue:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string

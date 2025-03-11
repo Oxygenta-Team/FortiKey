@@ -24,7 +24,8 @@ migrations-up:
 
 # Drop and recreate the schema
 migrations-drop:
-	docker exec -it $(CONTAINER_NAME) psql -U $(DB_USER) -d $(DB_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" || exit 1
+	docker run --rm $(NETWORK) -v $(MIGRATION_PATH):/migrations \
+		$(MIGRATE_IMAGE) -path=/migrations -database "$(DB_URL)" down || exit 1
 	@echo "Schema dropped and recreated successfully"
 
 print-vars:
