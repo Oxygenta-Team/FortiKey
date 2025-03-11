@@ -2,11 +2,10 @@ package postgres
 
 import (
 	"fmt"
-	"log"
-
-	"github.com/Oxygenta-Team/FortiKey/pkg/db"
 
 	"github.com/jmoiron/sqlx"
+
+	"github.com/Oxygenta-Team/FortiKey/pkg/db"
 
 	_ "github.com/lib/pq"
 )
@@ -20,11 +19,10 @@ func CreateStorage(dbConfig *db.Config) (*Storage, error) {
 
 	connect, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
+		// TODO return a standart errors
 		return nil, fmt.Errorf("failed to connect to the database: %s", err)
 	}
 
-	// TODO: IN THE FUTURE, USE A LOGGER!!!
-	log.Println("Successfully connected to the database!")
 	return &Storage{DB: connect}, nil
 }
 

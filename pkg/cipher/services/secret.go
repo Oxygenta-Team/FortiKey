@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/crypt"
+	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
 
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
 	"github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
@@ -12,22 +14,28 @@ import (
 type SecretService struct {
 	repoManager repository.RepoManager
 	db          *postgres.Storage
+	logger      *logging.Logger
 }
 
-func NewSecretService(repoManager repository.RepoManager, db *postgres.Storage) SecretSvc {
-	return &SecretService{repoManager: repoManager, db: db}
+func NewSecretService(repoManager repository.RepoManager, db *postgres.Storage, logger *logging.Logger) SecretSvc {
+	return &SecretService{repoManager: repoManager, db: db, logger: logger}
 }
 
 func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secret) error {
+	var err error
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("error during creating secret, err:%s, secrets: %v", err, secrets)
+		}
+	}()
 	secRepo := s.repoManager.NewSecretRepo(s.db)
-
 	for _, secret := range secrets {
-		if err := crypt.BCryptSecret(secret); err != nil {
+		if err = crypt.BCryptSecret(secret); err != nil {
 			return err
 		}
 	}
 
-	err := secRepo.InsertSecret(ctx, secrets)
+	err = secRepo.InsertSecret(ctx, secrets)
 	if err != nil {
 		return err
 	}
@@ -46,6 +54,13 @@ func (s *SecretService) GetSecretByKey(ctx context.Context, key string) (*models
 }
 
 func (s *SecretService) CompareSecret(ctx context.Context, keyValue *models.KeyValue) (bool, error) {
+	var err error
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("error during creating secret, err:%s, keyValue: %v", err, keyValue)
+		}
+	}()
+
 	secret, err := s.GetSecretByKey(ctx, keyValue.Key)
 	if err != nil {
 		return false, err
