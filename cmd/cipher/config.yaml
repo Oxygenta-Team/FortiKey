@@ -7,3 +7,4 @@ database:
   sslmode: disable
 
 addr: ':1221'
+logLevel: 5
