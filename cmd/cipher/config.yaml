@@ -1,10 +1,18 @@
 database:
-  host: localhost
-  port: 5432
-  user: postgres
-  password: postgres
-  dbname: mydb
-  sslmode: disable
+  host: "cipher-postgres"
+  port: "5432"
+  user: "postgres"
+  password: "postgres"
+  dbname: "mydb"
+  sslmode: "disable"
 
-addr: ':1221'
-logLevel: 5
+kafka:
+  brokers:
+    - "kafka:9092"
+  producer:
+    topic: "cipher-updates"
+  consumer:
+    group: "cipher"
+
+addr: ":3307"
+logLevel: "trace"
