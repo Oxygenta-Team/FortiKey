@@ -1,46 +1,65 @@
-package cipher
+package main
 
 import (
-	"net/http"
-
-	"github.com/sirupsen/logrus"
-
+	"flag"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cfg"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository/postgres"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/router"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
 	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
+	"github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
+	"github.com/sirupsen/logrus"
+	"log"
+	"net/http"
 
 	pg "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
 )
 
 // TODO: PATH FROM FLAG WITH DEFAULT PATH FROM ENV?
-var defaultPath = "./config.yaml"
-
-// TODO: GET PORT FROM CONFIG
-var temporalPort = ":1221"
+var defaultConfigPath = "./cmd/cipher/config.yaml"
 
 func main() {
+	var configPath string
+	flag.StringVar(
+		&configPath,
+		"config-path",
+		defaultConfigPath,
+		"provides a path to configuration file with extension .yaml")
+
+	flag.Parse()
+	logrus.Println("Config path is:", configPath)
 	var config config
-	err := cfg.UnmarshalYAML(defaultPath, &config)
+	err := cfg.UnmarshalYAML(configPath, &config)
 	if err != nil {
 		logrus.Fatalf("error during creation config, err: %s", err)
 		return
 	}
 
-	log := logging.NewLogger(config.LogLevel)
-
-	storage, err := pg.CreateStorage(&config.DB)
+	logrus.Printf("%+v", config)
+	level, err := logging.ParseLevel(config.LogLevel)
 	if err != nil {
-		log.Fatalf("error during creation storage(db), err: %s", err)
+		log.Fatalf("Failed to parse logging level. Err: %v", err)
+	}
+	logger, err := logging.NewLogger(level)
+	if err != nil {
+		logger.Fatalf("error during creation logger, err: %s", err)
 		return
 	}
-	log.Println("Successfully connected to db")
+	storage, err := pg.CreateStorage(&config.DB)
+	if err != nil {
+		logger.Fatalf("error during creation storage(db), err: %s", err)
+		return
+	}
+	logger.Println("Successfully connected to db")
 
-	svc := services.NewServices(postgres.NewRepoManager(), storage, log)
+	producer := kafka.NewProducer(&config.Kafka)
+	svc := services.NewServices(postgres.NewRepoManager(), producer, storage, logger)
 
 	r := router.NewRouter(svc)
 
-	log.Printf("Server is starting on %s", temporalPort)
-	log.Fatal(http.ListenAndServe(temporalPort, r))
+	svc.StartConsumer(logger, &config.Kafka)
+
+	logger.Infof("Server is starting on %s", config.Addr)
+	//logger.Fatal(http.ListenAndServe(config.Addr, nil))
+	logger.Fatal(http.ListenAndServe(config.Addr, r))
 }
