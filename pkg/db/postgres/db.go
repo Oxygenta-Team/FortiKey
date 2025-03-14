@@ -14,16 +14,20 @@ type Storage struct {
 	*sqlx.DB
 }
 
-func CreateStorage(dbConfig *db.Config) (*Storage, error) {
-	dsn := dbConfig.DNS()
-
-	connect, err := sqlx.Connect("postgres", dsn)
+func CreateStorageByURL(dns string) (*Storage, error) {
+	connect, err := sqlx.Connect("postgres", dns)
 	if err != nil {
 		// TODO return a standart errors
 		return nil, fmt.Errorf("failed to connect to the database: %s", err)
 	}
 
 	return &Storage{DB: connect}, nil
+}
+
+func CreateStorage(dbConfig *db.Config) (*Storage, error) {
+	dns := dbConfig.DNS()
+
+	return CreateStorageByURL(dns)
 }
 
 func (p *Storage) Close() error {

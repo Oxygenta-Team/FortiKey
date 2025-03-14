@@ -2,8 +2,6 @@ package postgres
 
 import (
 	"context"
-	"github.com/lib/pq"
-
 	"github.com/jmoiron/sqlx"
 
 	"github.com/Oxygenta-Team/FortiKey/pkg/models"
@@ -33,10 +31,10 @@ func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.S
 			secret.UserID,
 			secret.Key,
 			secret.Method,
-			pq.Array(secret.Hash),
+			secret.Hash,
 		)
 	}
-	q, args, err := insert.Prefix("RETURNING id").PlaceholderFormat(sq.Dollar).ToSql()
+	q, args, err := insert.Suffix("RETURNING id").PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return err
 	}
@@ -57,11 +55,11 @@ func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.S
 func (s *SecretRepository) GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error) {
 	q, args, err := sq.
 		Select(`
-			s.id, 
+			s.id,
 			s.user_id,
 			s.key,
 			s.method,
-			s.hash,
+			s.hash
 		`).
 		From("secrets s").
 		Where(sq.Eq{
@@ -108,11 +106,11 @@ func (s *SecretRepository) GetSecretByKey(ctx context.Context, key string) (*mod
 }
 
 func (s *SecretRepository) DeleteSecret(ctx context.Context, ids []uint64) error {
-	q, args, err := sq.Update("secrets s").
-		Set("s.is_deleted", false).
+	q, args, err := sq.Update("secrets").
+		Set("is_deleted", true).
 		Where(sq.Eq{
-			"s.is_deleted": true,
-			"s.id":         ids,
+			"is_deleted": false,
+			"id":         ids,
 		}).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return err
