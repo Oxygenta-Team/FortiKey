@@ -10,9 +10,18 @@ type Secret struct {
 	ID     uint64       `json:"id" db:"id"`
 	UserID uint64       `json:"user_id" db:"user_id"`
 	Key    string       `json:"key" db:"key"`
-	Value  string       `json:"value,-"`
+	Value  string       `json:"value,omitempty"`
 	Method SecretMethod `json:"method" db:"method"`
-	Hash   []byte       `json:"-" db:"hash"`
+	Hash   []byte       `json:"hash,omitempty" db:"hash"`
+}
+
+func (s *Secret) Hide(value, hash bool) {
+	if value {
+		s.Value = ""
+	}
+	if hash {
+		s.Hash = nil
+	}
 }
 
 type KeyValue struct {

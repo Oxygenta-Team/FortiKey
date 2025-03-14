@@ -1,13 +1,13 @@
-package cipher
+package main
 
 import (
-	"github.com/sirupsen/logrus"
-
 	"github.com/Oxygenta-Team/FortiKey/pkg/db"
+	"github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
 )
 
 type config struct {
 	Addr     string       `yaml:"addr"`
-	LogLevel logrus.Level `yaml:"logLevel"`
-	DB       db.Config    `yaml:"db"`
+	LogLevel string       `yaml:"logLevel"`
+	DB       db.Config    `yaml:"database"`
+	Kafka    kafka.Config `yaml:"kafka"`
 }

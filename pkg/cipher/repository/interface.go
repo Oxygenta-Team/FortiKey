@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-
 	"github.com/jmoiron/sqlx"
 
 	"github.com/Oxygenta-Team/FortiKey/pkg/models"

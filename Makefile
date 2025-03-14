@@ -19,6 +19,15 @@ MIGRATION_PATH_user-management = $(PWD)/pkg/user-management/migrations
 DB_PORT_user-management ?= 5432
 DB_URL_user-management = postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT_user-management)/$(DB_NAME)?sslmode=$(SSL_MODE)
 
+up:
+	$(MAKE) kafka-up
+	docker-compose up -d cipher
+
+kafka-up:
+	docker-compose up -d zookeeper
+	docker-compose up -d kafka
+	docker-compose up -d kafka-ui
+
 migrations-up migrations-drop:
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Please specify a service, e.g., make $@ SERVICE=cipher"; \
