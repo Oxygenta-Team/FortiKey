@@ -6,13 +6,13 @@ import (
 )
 
 func BCryptSecret(secret *models.Secret) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(secret.Value), bcrypt.MaxCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(secret.Value), bcrypt.DefaultCost)
 	if err != nil {
 		return ErrBcryptGenerate
 	}
 	secret.Hash = hashedPassword
 	secret.Method = models.BCRYPT
-	secret.UserID = 1000 // TODO Temporary, we need a user-management
+	// secret.UserID = 500 // TODO Temporary, we need a user-management
 
 	return nil
 }

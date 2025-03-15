@@ -1,13 +1,21 @@
 package testassets
 
 import (
+	"github.com/sirupsen/logrus"
+
+	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
 	"github.com/Oxygenta-Team/FortiKey/pkg/models"
 )
 
 var (
-	ID500 = uint64(500)
-	ID501 = uint64(501)
-	ID502 = uint64(502)
+	Logger = logging.NewLogger(logrus.TraceLevel)
+
+	ExpectedInternalError      = `{"status":500,"message":"internal server error"}`
+	ExpectedNotFoundError      = `{"status":400,"message":"not found"}`
+	ExpectedBcryptDecryptError = `{"status":500,"message":"error on bcrypt decrypting"}`
+	ID500                      = uint64(500)
+	ID501                      = uint64(501)
+	ID502                      = uint64(502)
 
 	Value1 = "secretPassword"
 	Value2 = "secretPassword_2"

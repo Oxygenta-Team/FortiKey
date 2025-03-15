@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
 	"github.com/Oxygenta-Team/FortiKey/pkg/models"
 	"github.com/Oxygenta-Team/FortiKey/pkg/rest"
@@ -28,7 +30,7 @@ func NewCreateSecretHandler(svc services.SecretSvc) http.HandlerFunc {
 
 		err = svc.CreateSecret(r.Context(), secrets)
 		if err != nil {
-			rest.ReturnError(w, http.StatusInternalServerError, err)
+			rest.ReturnError(w, http.StatusInternalServerError, services.ErrInternal)
 			return
 		}
 
@@ -54,6 +56,10 @@ func NewCompareSecretHandler(svc services.SecretSvc) http.HandlerFunc {
 
 		compare, err := svc.CompareSecret(r.Context(), keyValue)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				rest.ReturnError(w, http.StatusBadRequest, services.ErrNotFound)
+				return
+			}
 			rest.ReturnError(w, http.StatusInternalServerError, err)
 			return
 		}
