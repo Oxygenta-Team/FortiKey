@@ -6,7 +6,7 @@ info:
 servers:
   - url: /api/v1
 paths:
-  /secret:
+  /secrets:
     post:
       tags:
         - secret
