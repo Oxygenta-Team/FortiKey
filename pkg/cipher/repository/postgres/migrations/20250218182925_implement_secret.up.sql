@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS secrets(
+CREATE TABLE IF NOT EXISTS secrets (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     user_id BIGINT NOT NULL,
     method VARCHAR(45) NOT NULL,
@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS secrets(
     hash BYTEA NOT NULL,
     is_deleted BOOLEAN DEFAULT false
 );
+
+ALTER SEQUENCE secrets_id_seq RESTART WITH 500;

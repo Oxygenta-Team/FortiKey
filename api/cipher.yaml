@@ -75,6 +75,8 @@ components:
         id:
           type: integer
           readOnly: true
+        user_id:
+          type: integer
         key:
           type: string
           description: Key for saving (login or email)
@@ -82,6 +84,9 @@ components:
           type: string
           writeOnly: true
           description: data to secreting
+        method:
+          type: string
+          description: type for encrypting
 
     KeyValue:
       type: object

@@ -61,7 +61,7 @@ func (s *SecretService) CompareSecret(ctx context.Context, keyValue *models.KeyV
 		}
 	}()
 
-	secret, err := s.GetSecretByKey(ctx, keyValue.Key)
+	secret, err := s.repoManager.NewSecretRepo(s.db).GetSecretByKey(ctx, keyValue.Key)
 	if err != nil {
 		return false, err
 	}
@@ -71,6 +71,8 @@ func (s *SecretService) CompareSecret(ctx context.Context, keyValue *models.KeyV
 		ok := crypt.BCryptCompare(secret.Hash, keyValue.Value)
 		if !ok {
 			return false, crypt.ErrBcryptCompare
+		} else {
+			return ok, nil
 		}
 	}
 
