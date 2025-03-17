@@ -69,3 +69,29 @@ services:
       POSTGRES_SSL_MODE: disable
     ports:
       -  5432:5432
+
+#  traefik:
+#    image: traefik:v3.3
+#    restart: always
+#    command: --api.insecure=true --providers.docker
+#    ports:
+#      - "80:80"       # Проксирование HTTP
+#      - "8080:8080"   # Дашборд Traefik (необязательно)
+#    volumes:
+#      - "/var/run/docker.sock:/var/run/docker.sock"
+##      - "./traefik.yml:/etc/traefik/traefik.yml"
+##      - "./dynamic.yml:/etc/traefik/dynamic.yml"
+
+  reverse-proxy:
+    # The official v3 Traefik docker image
+    image: traefik:v3.3
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
