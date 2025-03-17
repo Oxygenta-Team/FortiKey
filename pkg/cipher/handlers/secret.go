@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-func NewCreateSecretHandler(svc services.SecretSvc) http.HandlerFunc {
+	func NewCreateSecretHandler(svc services.SecretSvc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
