@@ -35,7 +35,7 @@ func (s *Services) StartUserManagementConsumer(l *logging.Logger, conf *kafka.Co
 			if err != nil {
 				return err
 			}
-			// Do some
+			// Add some
 		}
 
 		return nil

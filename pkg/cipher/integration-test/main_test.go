@@ -1,6 +1,7 @@
 package integration_test
 
 import (
+	"github.com/go-redis/redismock/v9"
 	"log"
 	"net/http/httptest"
 	"testing"
@@ -10,12 +11,15 @@ import (
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
 
 	pg "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+	redis_mock "github.com/Oxygenta-Team/FortiKey/pkg/db/redis/mock"
+	kafka_mock "github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka/mock"
 	ta "github.com/Oxygenta-Team/FortiKey/pkg/testassets"
 )
 
 var (
-	db *pg.Storage
-	ts *httptest.Server
+	db    *pg.Storage
+	ts    *httptest.Server
+	rmock redismock.ClientMock
 )
 
 const serviceName = "cipher"
@@ -26,8 +30,9 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 	db = dockerDB
-
-	svc := services.NewServices(postgres.NewRepoManager(), db, ta.Logger)
+	rdb, rdbmock := redis_mock.NewMockRedisClient()
+	rmock = rdbmock
+	svc := services.NewServices(postgres.NewRepoManager(), kafka_mock.NewProducerMock(nil), db, rdb, ta.Logger)
 	r := router.NewRouter(svc)
 	ts = httptest.NewServer(r)
 

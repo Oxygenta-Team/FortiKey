@@ -21,6 +21,7 @@ DB_URL_user-management = postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PO
 
 up:
 	$(MAKE) kafka-up
+	docker-compose up -d cipher-postgres
 	docker-compose up -d cipher
 
 kafka-up:

@@ -6,6 +6,13 @@ database:
   dbname: "mydb"
   sslmode: "disable"
 
+redis:
+  host: "redis-17931.c135.eu-central-1-1.ec2.redns.redis-cloud.com"
+  port: "17931"
+  user: "default"
+  password: "ABBf0iaLrhxet6oUL53u19TDfvvajcUJ"
+  dbname: "Free-db"
+
 kafka:
   brokers:
     - "kafka:9092"

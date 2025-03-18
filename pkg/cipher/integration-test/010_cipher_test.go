@@ -42,13 +42,16 @@ func TestCreateSecretHandler(t *testing.T) {
 				t.Fatal(err)
 			}
 			//req.Header.Add("Authorization", tc.jwtToken)
+			for _, secret := range tc.inputBody {
+				rmock.ExpectSet(secret.Key, secret.Value, 1).RedisNil()
+			}
+
 			res, err := http.DefaultClient.Do(req)
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
-
 			assert.Equal(t, tc.expectedStatusCode, res.StatusCode)
 			assert.Equal(t, tc.expectedRequestBody, string(body))
 		})
@@ -93,14 +96,14 @@ func TestCompareSecretHandler(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			//req.Header.Add("Authorization", tc.jwtToken)
+			rmock.ExpectSet(tc.inputBody.Key, tc.inputBody.Value, 1).RedisNil()
 			res, err := http.DefaultClient.Do(req)
+			//req.Header.Add("Authorization", tc.jwtToken)
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
-
 			assert.Equal(t, tc.expectedStatusCode, res.StatusCode)
 			assert.Equal(t, tc.expectedRequestBody, string(body))
 		})

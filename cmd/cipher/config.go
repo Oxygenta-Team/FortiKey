@@ -9,5 +9,6 @@ type config struct {
 	Addr     string       `yaml:"addr"`
 	LogLevel string       `yaml:"logLevel"`
 	DB       db.Config    `yaml:"database"`
+	Redis    db.Config    `yaml:"redis"`
 	Kafka    kafka.Config `yaml:"kafka"`
 }

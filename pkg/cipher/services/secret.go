@@ -3,25 +3,29 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
+	"time"
 
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/crypt"
-	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
-
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
 	"github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+	"github.com/Oxygenta-Team/FortiKey/pkg/db/redis"
+	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
 	"github.com/Oxygenta-Team/FortiKey/pkg/models"
+	"github.com/Oxygenta-Team/FortiKey/pkg/queue"
+
+	r "github.com/redis/go-redis/v9"
 )
 
 type SecretService struct {
 	repoManager repository.RepoManager
-	producer    *kafka.Producer
+	producer    queue.Producer
 	db          *postgres.Storage
+	rcl         redis.Cacher
 	logger      *logging.Logger
 }
 
-func NewSecretService(repoManager repository.RepoManager, producer *kafka.Producer, db *postgres.Storage, logger *logging.Logger) SecretSvc {
-	return &SecretService{repoManager: repoManager, producer: producer, db: db, logger: logger}
+func NewSecretService(repoManager repository.RepoManager, producer queue.Producer, db *postgres.Storage, rcl redis.Cacher, logger *logging.Logger) SecretSvc {
+	return &SecretService{repoManager: repoManager, producer: producer, db: db, rcl: rcl, logger: logger}
 }
 
 func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secret) error {
@@ -42,7 +46,7 @@ func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secr
 	if err != nil {
 		return err
 	}
-	// TODO Do Transaction
+	// TODO Add Transaction
 
 	facts := make([]*models.KafkaMessage, len(secrets))
 	for i, secret := range secrets {
@@ -57,9 +61,19 @@ func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secr
 			ActionType: models.CreateActionType,
 			Object:     &objRaw,
 		}
-		secret.Hide(true, true)
 	}
 	err = s.producer.ProduceMessages(ctx, facts)
+	if err != nil {
+		//return ErrInternal // TODO not required
+	}
+
+	for _, secret := range secrets {
+		if err := s.rcl.Do(func(client *r.Client) *r.StatusCmd {
+			return client.Set(ctx, secret.Key, secret.Value, 5*60*time.Second)
+		}); err != nil {
+			s.logger.Debugf("problem during saving in redis, err:%s", err)
+		}
+	}
 
 	return err
 }
@@ -81,6 +95,14 @@ func (s *SecretService) CompareSecret(ctx context.Context, keyValue *models.KeyV
 			s.logger.Errorf("error during creating secret, err:%s, keyValue: %+v", err, keyValue)
 		}
 	}()
+
+	if value, err := s.rcl.Get(func(client *r.Client) (any, error) {
+		return client.Get(ctx, keyValue.Key).Result()
+	}); err != nil && err != r.Nil {
+		if value == keyValue.Value {
+			return true, nil
+		}
+	}
 
 	secret, err := s.repoManager.NewSecretRepo(s.db).GetSecretByKey(ctx, keyValue.Key)
 	if err != nil {
