@@ -48,7 +48,6 @@ func TestCreateSecretHandler(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-
 			assert.Equal(t, tc.expectedStatusCode, res.StatusCode)
 			assert.Equal(t, tc.expectedRequestBody, string(body))
 		})
