@@ -40,11 +40,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to parse logging level. Err: %v", err)
 	}
-	logger, err := logging.NewLogger(level)
-	if err != nil {
-		logger.Fatalf("error during creation logger, err: %s", err)
-		return
-	}
+	logger := logging.NewLogger(level)
+
 	storage, err := pg.CreateStorage(&config.DB)
 	if err != nil {
 		logger.Fatalf("error during creation storage(db), err: %s", err)

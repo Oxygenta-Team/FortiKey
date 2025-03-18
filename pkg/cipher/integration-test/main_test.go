@@ -1,6 +1,7 @@
 package integration_test
 
 import (
+	kafka_mock "github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka/mock"
 	"log"
 	"net/http/httptest"
 	"testing"
@@ -27,7 +28,7 @@ func TestMain(m *testing.M) {
 	}
 	db = dockerDB
 
-	svc := services.NewServices(postgres.NewRepoManager(), db, ta.Logger)
+	svc := services.NewServices(postgres.NewRepoManager(), kafka_mock.NewProducerMock(nil), db, ta.Logger)
 	r := router.NewRouter(svc)
 	ts = httptest.NewServer(r)
 

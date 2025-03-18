@@ -20,12 +20,12 @@ type Logger struct {
 	*logrus.Entry
 }
 
-func NewLogger(level Level) (*Logger, error) {
+func NewLogger(level Level) *Logger {
 	l := logrus.New()
 	l.Level = level
 	return &Logger{
 		Entry: logrus.NewEntry(l),
-	}, nil
+	}
 }
 
 func ParseLevel(level string) (Level, error) {

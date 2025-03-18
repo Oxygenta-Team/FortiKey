@@ -3,10 +3,9 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
-
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/crypt"
 	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
+	"github.com/Oxygenta-Team/FortiKey/pkg/queue"
 
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
 	"github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
@@ -15,12 +14,12 @@ import (
 
 type SecretService struct {
 	repoManager repository.RepoManager
-	producer    *kafka.Producer
+	producer    queue.Producer
 	db          *postgres.Storage
 	logger      *logging.Logger
 }
 
-func NewSecretService(repoManager repository.RepoManager, producer *kafka.Producer, db *postgres.Storage, logger *logging.Logger) SecretSvc {
+func NewSecretService(repoManager repository.RepoManager, producer queue.Producer, db *postgres.Storage, logger *logging.Logger) SecretSvc {
 	return &SecretService{repoManager: repoManager, producer: producer, db: db, logger: logger}
 }
 
@@ -57,7 +56,6 @@ func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secr
 			ActionType: models.CreateActionType,
 			Object:     &objRaw,
 		}
-		secret.Hide(true, true)
 	}
 	err = s.producer.ProduceMessages(ctx, facts)
 
