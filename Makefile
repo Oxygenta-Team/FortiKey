@@ -28,6 +28,17 @@ kafka-up:
 	docker-compose up -d kafka
 	docker-compose up -d kafka-ui
 
+testing:
+	$(MAKE) go-testing
+
+go-testing:
+	go test -coverprofile=c.out -coverpkg=./... ./...
+	$(MAKE) go-coverage-generate
+
+go-coverage-generate:
+	go tool cover -html=./c.out -o ./test-coverage.html
+	rm ./c.out
+
 migrations-up migrations-drop:
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Please specify a service, e.g., make $@ SERVICE=cipher"; \

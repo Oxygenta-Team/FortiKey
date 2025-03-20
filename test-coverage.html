@@ -1,0 +1,1081 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>cipher: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/Oxygenta-Team/FortiKey/cmd/cipher/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/Oxygenta-Team/FortiKey/pkg/cfg/parser.go (0.0%)</option>
+				
+				<option value="file2">github.com/Oxygenta-Team/FortiKey/pkg/cipher/crypt/bcypt.go (87.5%)</option>
+				
+				<option value="file3">github.com/Oxygenta-Team/FortiKey/pkg/cipher/handlers/secret.go (77.1%)</option>
+				
+				<option value="file4">github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository/postgres/repo-manager.go (100.0%)</option>
+				
+				<option value="file5">github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository/postgres/secret.go (85.7%)</option>
+				
+				<option value="file6">github.com/Oxygenta-Team/FortiKey/pkg/cipher/router/router.go (100.0%)</option>
+				
+				<option value="file7">github.com/Oxygenta-Team/FortiKey/pkg/cipher/services/fact_consumer.go (0.0%)</option>
+				
+				<option value="file8">github.com/Oxygenta-Team/FortiKey/pkg/cipher/services/secret.go (83.8%)</option>
+				
+				<option value="file9">github.com/Oxygenta-Team/FortiKey/pkg/cipher/services/services.go (100.0%)</option>
+				
+				<option value="file10">github.com/Oxygenta-Team/FortiKey/pkg/db/config.go (0.0%)</option>
+				
+				<option value="file11">github.com/Oxygenta-Team/FortiKey/pkg/db/postgres/db.go (57.1%)</option>
+				
+				<option value="file12">github.com/Oxygenta-Team/FortiKey/pkg/logging/log.go (80.0%)</option>
+				
+				<option value="file13">github.com/Oxygenta-Team/FortiKey/pkg/models/secret.go (0.0%)</option>
+				
+				<option value="file14">github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka/consumer.go (0.0%)</option>
+				
+				<option value="file15">github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka/mock/producer_mock.go (66.7%)</option>
+				
+				<option value="file16">github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka/producer.go (0.0%)</option>
+				
+				<option value="file17">github.com/Oxygenta-Team/FortiKey/pkg/rest/writer.go (87.5%)</option>
+				
+				<option value="file18">github.com/Oxygenta-Team/FortiKey/pkg/testassets/docker_db.go (78.0%)</option>
+				
+				<option value="file19">github.com/Oxygenta-Team/FortiKey/pkg/testassets/funcs.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "flag"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cfg"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository/postgres"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/router"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
+        "github.com/Oxygenta-Team/FortiKey/pkg/logging"
+        "github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
+        "github.com/sirupsen/logrus"
+        "log"
+        "net/http"
+
+        pg "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+)
+
+// TODO: PATH FROM FLAG WITH DEFAULT PATH FROM ENV?
+var defaultConfigPath = "./cmd/cipher/config.yaml"
+
+func main() <span class="cov0" title="0">{
+        var configPath string
+        flag.StringVar(
+                &amp;configPath,
+                "config-path",
+                defaultConfigPath,
+                "provides a path to configuration file with extension .yaml")
+
+        flag.Parse()
+        logrus.Println("Config path is:", configPath)
+        var config config
+        err := cfg.UnmarshalYAML(configPath, &amp;config)
+        if err != nil </span><span class="cov0" title="0">{
+                logrus.Fatalf("error during creation config, err: %s", err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">logrus.Printf("%+v", config)
+        level, err := logging.ParseLevel(config.LogLevel)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Failed to parse logging level. Err: %v", err)
+        }</span>
+        <span class="cov0" title="0">logger := logging.NewLogger(level)
+
+        storage, err := pg.CreateStorage(&amp;config.DB)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Fatalf("error during creation storage(db), err: %s", err)
+                return
+        }</span>
+        <span class="cov0" title="0">logger.Println("Successfully connected to db")
+
+        producer := kafka.NewProducer(&amp;config.Kafka)
+        svc := services.NewServices(postgres.NewRepoManager(), producer, storage, logger)
+
+        r := router.NewRouter(svc)
+
+        svc.StartConsumer(logger, &amp;config.Kafka)
+
+        logger.Infof("Server is starting on %s", config.Addr)
+        //logger.Fatal(http.ListenAndServe(config.Addr, nil))
+        logger.Fatal(http.ListenAndServe(config.Addr, r))</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package cfg
+
+import (
+        "os"
+
+        "github.com/sirupsen/logrus"
+        "gopkg.in/yaml.v3"
+)
+
+func UnmarshalYAML(path string, config any) error <span class="cov0" title="0">{
+        fileData, err := os.ReadFile(path)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">logrus.Debug("unmarshal was success")
+        return yaml.Unmarshal(fileData, config)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package crypt
+
+import (
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+        "golang.org/x/crypto/bcrypt"
+)
+
+func BCryptSecret(secret *models.Secret) error <span class="cov8" title="1">{
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(secret.Value), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return ErrBcryptGenerate
+        }</span>
+        <span class="cov8" title="1">secret.Hash = hashedPassword
+        secret.Method = models.BCRYPT
+        // secret.UserID = 500 // TODO Temporary, we need a user-management
+
+        return nil</span>
+}
+
+func BCryptCompare(hash []byte, value string) bool <span class="cov8" title="1">{
+        err := bcrypt.CompareHashAndPassword(hash, []byte(value))
+
+        return err == nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handlers
+
+import (
+        "database/sql"
+        "encoding/json"
+        "errors"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+        "github.com/Oxygenta-Team/FortiKey/pkg/rest"
+        "io"
+
+        "net/http"
+)
+
+func NewCreateSecretHandler(svc services.SecretSvc) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                b, err := io.ReadAll(r.Body)
+                if err != nil </span><span class="cov0" title="0">{
+                        rest.ReturnError(w, http.StatusBadRequest, err)
+                        return
+                }</span>
+                <span class="cov8" title="1">defer r.Body.Close()
+
+                var secrets []*models.Secret
+                err = json.Unmarshal(b, &amp;secrets)
+                if err != nil </span><span class="cov0" title="0">{
+                        rest.ReturnError(w, http.StatusBadRequest, err)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">err = svc.CreateSecret(r.Context(), secrets)
+                if err != nil </span><span class="cov8" title="1">{
+                        rest.ReturnError(w, http.StatusInternalServerError, services.ErrInternal)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">rest.ResponseJSON(w, http.StatusOK, secrets)</span>
+        }
+}
+
+func NewCompareSecretHandler(svc services.SecretSvc) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                b, err := io.ReadAll(r.Body)
+                if err != nil </span><span class="cov0" title="0">{
+                        rest.ReturnError(w, http.StatusBadRequest, err)
+                        return
+                }</span>
+                <span class="cov8" title="1">defer r.Body.Close()
+
+                var keyValue *models.KeyValue
+                err = json.Unmarshal(b, &amp;keyValue)
+                if err != nil </span><span class="cov0" title="0">{
+                        rest.ReturnError(w, http.StatusBadRequest, err)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">compare, err := svc.CompareSecret(r.Context(), keyValue)
+                if err != nil </span><span class="cov8" title="1">{
+                        if errors.Is(err, sql.ErrNoRows) </span><span class="cov8" title="1">{
+                                rest.ReturnError(w, http.StatusBadRequest, services.ErrNotFound)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">rest.ReturnError(w, http.StatusInternalServerError, err)
+                        return</span>
+                }
+
+                <span class="cov8" title="1">rest.ResponseJSON(w, http.StatusOK, compare)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package postgres
+
+import (
+        "github.com/jmoiron/sqlx"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
+)
+
+type RepoManager struct {
+}
+
+func NewRepoManager() *RepoManager <span class="cov8" title="1">{
+        return &amp;RepoManager{}
+}</span>
+
+func (r *RepoManager) NewSecretRepo(db sqlx.ExtContext) repository.SecretRepo <span class="cov8" title="1">{
+        return NewSecretRepo(db)
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package postgres
+
+import (
+        "context"
+        "github.com/jmoiron/sqlx"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+
+        sq "github.com/Masterminds/squirrel"
+)
+
+type SecretRepository struct {
+        db sqlx.ExtContext
+}
+
+func NewSecretRepo(db sqlx.ExtContext) *SecretRepository <span class="cov8" title="1">{
+        return &amp;SecretRepository{db: db}
+}</span>
+
+func (s *SecretRepository) InsertSecret(ctx context.Context, secrets []*models.Secret) error <span class="cov8" title="1">{
+        insert := sq.
+                Insert("secrets").
+                Columns(`
+                        user_id,                        
+                        key,
+                        method,
+                        hash
+                `)
+        for _, secret := range secrets </span><span class="cov8" title="1">{
+                insert = insert.Values(
+                        secret.UserID,
+                        secret.Key,
+                        secret.Method,
+                        secret.Hash,
+                )
+        }</span>
+        <span class="cov8" title="1">q, args, err := insert.Suffix("RETURNING id").PlaceholderFormat(sq.Dollar).ToSql()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">rows, err := s.db.QueryxContext(ctx, q, args...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">for i := 0; rows.Next(); i++ </span><span class="cov8" title="1">{
+                if err := rows.Scan(&amp;secrets[i].ID); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+        }
+
+        <span class="cov8" title="1">return err</span>
+}
+
+func (s *SecretRepository) GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error) <span class="cov8" title="1">{
+        q, args, err := sq.
+                Select(`
+                        s.id,
+                        s.user_id,
+                        s.key,
+                        s.method,
+                        s.hash
+                `).
+                From("secrets s").
+                Where(sq.Eq{
+                        "s.id":         id,
+                        "s.is_deleted": false,
+                }).PlaceholderFormat(sq.Dollar).ToSql()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var secret models.Secret
+        err = sqlx.GetContext(ctx, s.db, &amp;secret, q, args...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return &amp;secret, nil</span>
+}
+
+func (s *SecretRepository) GetSecretByKey(ctx context.Context, key string) (*models.Secret, error) <span class="cov8" title="1">{
+        q, args, err := sq.Select(`
+                        s.id, 
+                        s.user_id,
+                        s.key,
+                        s.method,
+                        s.hash
+                `).
+                From("secrets s").
+                Where(sq.Eq{
+                        "s.key":        key,
+                        "s.is_deleted": false,
+                }).PlaceholderFormat(sq.Dollar).ToSql()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var secret models.Secret
+        err = sqlx.GetContext(ctx, s.db, &amp;secret, q, args...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return &amp;secret, nil</span>
+}
+
+func (s *SecretRepository) DeleteSecret(ctx context.Context, ids []uint64) error <span class="cov8" title="1">{
+        q, args, err := sq.Update("secrets").
+                Set("is_deleted", true).
+                Where(sq.Eq{
+                        "is_deleted": false,
+                        "id":         ids,
+                }).PlaceholderFormat(sq.Dollar).ToSql()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.db.ExecContext(ctx, q, args...)
+
+        return err</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package router
+
+import (
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/handlers"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
+        "net/http"
+
+        "github.com/gorilla/mux"
+)
+
+func NewRouter(svc *services.Services) *mux.Router <span class="cov8" title="1">{
+        r := mux.NewRouter()
+        apiV1 := r.PathPrefix("/api/v1").Subrouter()
+
+        apiV1.HandleFunc("/secrets", handlers.NewCreateSecretHandler(svc.SecretSvc)).
+                Methods(http.MethodPost)
+        apiV1.HandleFunc("/secrets", handlers.NewCompareSecretHandler(svc.SecretSvc)).
+                Methods(http.MethodGet)
+
+        return r
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package services
+
+import (
+        "encoding/json"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/logging"
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+        "github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
+)
+
+func (s *Services) StartConsumer(l *logging.Logger, config *kafka.Config) <span class="cov0" title="0">{
+        topicsToStartFactConsumerFunctions := kafka.TopicToConsumer{
+                "cipher-updates": s.StartUserManagementConsumer,
+        }
+
+        kafka.StartConsuming(l, config, topicsToStartFactConsumerFunctions)
+}</span>
+
+func (s *Services) StartUserManagementConsumer(l *logging.Logger, conf *kafka.Config, topic string) <span class="cov0" title="0">{
+        kafka.ConsumeMessages(l, conf, topic, func(message *kafka.Message) error </span><span class="cov0" title="0">{
+                //ctx := context.Background()
+                var obj *models.KafkaMessage
+                l.Warnf("take a message from user-management, msg:%+v", message.Message)
+
+                err := json.Unmarshal(message.Message.Value, &amp;obj)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov0" title="0">switch obj.ObjectType </span>{
+                case models.SecretObjectType:<span class="cov0" title="0">
+                        // Add user
+                        var secret models.Secret
+                        err := json.Unmarshal(*obj.Object, &amp;secret)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return err
+                        }</span>
+                        // Do some
+                }
+
+                <span class="cov0" title="0">return nil</span>
+        })
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package services
+
+import (
+        "context"
+        "encoding/json"
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/crypt"
+        "github.com/Oxygenta-Team/FortiKey/pkg/logging"
+        "github.com/Oxygenta-Team/FortiKey/pkg/queue"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
+        "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+)
+
+type SecretService struct {
+        repoManager repository.RepoManager
+        producer    queue.Producer
+        db          *postgres.Storage
+        logger      *logging.Logger
+}
+
+func NewSecretService(repoManager repository.RepoManager, producer queue.Producer, db *postgres.Storage, logger *logging.Logger) SecretSvc <span class="cov8" title="1">{
+        return &amp;SecretService{repoManager: repoManager, producer: producer, db: db, logger: logger}
+}</span>
+
+func (s *SecretService) CreateSecret(ctx context.Context, secrets []*models.Secret) error <span class="cov8" title="1">{
+        var err error
+        defer func() </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov8" title="1">{
+                        s.logger.Errorf("error during creating secret, err:%s, secrets: %+v", err, secrets)
+                }</span>
+        }()
+        <span class="cov8" title="1">secRepo := s.repoManager.NewSecretRepo(s.db)
+        for _, secret := range secrets </span><span class="cov8" title="1">{
+                if err = crypt.BCryptSecret(secret); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+        }
+
+        <span class="cov8" title="1">err = secRepo.InsertSecret(ctx, secrets)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        // TODO Do Transaction
+
+        <span class="cov8" title="1">facts := make([]*models.KafkaMessage, len(secrets))
+        for i, secret := range secrets </span><span class="cov8" title="1">{
+                var objRaw json.RawMessage
+                objRaw, err = json.Marshal(secret)
+                if err != nil </span><span class="cov0" title="0">{
+                        return ErrInternal
+                }</span>
+                <span class="cov8" title="1">facts[i] = &amp;models.KafkaMessage{
+                        ID:         secret.ID,
+                        ObjectType: models.SecretObjectType,
+                        ActionType: models.CreateActionType,
+                        Object:     &amp;objRaw,
+                }</span>
+        }
+        <span class="cov8" title="1">err = s.producer.ProduceMessages(ctx, facts)
+
+        return err</span>
+}
+
+func (s *SecretService) GetSecretByID(ctx context.Context, id uint64) (*models.Secret, error) <span class="cov0" title="0">{
+        //TODO implement me
+        panic("implement me")</span>
+}
+
+func (s *SecretService) GetSecretByKey(ctx context.Context, key string) (*models.Secret, error) <span class="cov0" title="0">{
+        //TODO implement me
+        panic("implement me")</span>
+}
+
+func (s *SecretService) CompareSecret(ctx context.Context, keyValue *models.KeyValue) (bool, error) <span class="cov8" title="1">{
+        var err error
+        defer func() </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov8" title="1">{
+                        s.logger.Errorf("error during creating secret, err:%s, keyValue: %+v", err, keyValue)
+                }</span>
+        }()
+
+        <span class="cov8" title="1">secret, err := s.repoManager.NewSecretRepo(s.db).GetSecretByKey(ctx, keyValue.Key)
+        if err != nil </span><span class="cov8" title="1">{
+                return false, err
+        }</span>
+
+        <span class="cov8" title="1">switch secret.Method </span>{
+        case models.BCRYPT:<span class="cov8" title="1">
+                ok := crypt.BCryptCompare(secret.Hash, keyValue.Value)
+                if !ok </span><span class="cov8" title="1">{
+                        return false, crypt.ErrBcryptCompare
+                }</span> else<span class="cov8" title="1"> {
+                        return ok, nil
+                }</span>
+        }
+
+        <span class="cov0" title="0">return false, ErrInternal</span>
+}
+
+func (s *SecretService) DeleteSecret(ctx context.Context, ids []uint64) error <span class="cov0" title="0">{
+        //TODO implement me
+        panic("implement me")</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package services
+
+import (
+        "github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository"
+        "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+        "github.com/Oxygenta-Team/FortiKey/pkg/logging"
+        "github.com/Oxygenta-Team/FortiKey/pkg/queue"
+)
+
+func NewServices(repoManager repository.RepoManager, producer queue.Producer, storage *postgres.Storage, logger *logging.Logger) *Services <span class="cov8" title="1">{
+        return &amp;Services{
+                SecretSvc: NewSecretService(repoManager, producer, storage, logger.WithField("component", "SecretService")),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package db
+
+import "fmt"
+
+type Config struct {
+        Host     string `yaml:"host"`
+        Port     string `yaml:"port"`
+        User     string `yaml:"user"`
+        Password string `yaml:"password"`
+        DBName   string `yaml:"dbname"`
+        SSLMode  string `yaml:"sslmode"`
+}
+
+func (db *Config) DNS() string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+                db.Host, db.Port, db.User,
+                db.Password, db.DBName, db.SSLMode,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package postgres
+
+import (
+        "fmt"
+
+        "github.com/jmoiron/sqlx"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/db"
+
+        _ "github.com/lib/pq"
+)
+
+type Storage struct {
+        *sqlx.DB
+}
+
+func CreateStorageByURL(dns string) (*Storage, error) <span class="cov8" title="1">{
+        connect, err := sqlx.Connect("postgres", dns)
+        if err != nil </span><span class="cov8" title="1">{
+                // TODO return a standart errors
+                return nil, fmt.Errorf("failed to connect to the database: %s", err)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;Storage{DB: connect}, nil</span>
+}
+
+func CreateStorage(dbConfig *db.Config) (*Storage, error) <span class="cov0" title="0">{
+        dns := dbConfig.DNS()
+
+        return CreateStorageByURL(dns)
+}</span>
+
+func (p *Storage) Close() error <span class="cov0" title="0">{
+        return p.DB.Close()
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package logging
+
+import (
+        "github.com/sirupsen/logrus"
+)
+
+type Level = logrus.Level
+
+const (
+        PanicLevel Level = logrus.PanicLevel
+        FatalLevel Level = logrus.FatalLevel
+        ErrorLevel Level = logrus.ErrorLevel
+        WarnLevel  Level = logrus.WarnLevel
+        InfoLevel  Level = logrus.InfoLevel
+        DebugLevel Level = logrus.DebugLevel
+        TraceLevel Level = logrus.TraceLevel
+)
+
+type Logger struct {
+        *logrus.Entry
+}
+
+func NewLogger(level Level) *Logger <span class="cov8" title="1">{
+        l := logrus.New()
+        l.Level = level
+        return &amp;Logger{
+                Entry: logrus.NewEntry(l),
+        }
+}</span>
+
+func ParseLevel(level string) (Level, error) <span class="cov0" title="0">{
+        return logrus.ParseLevel(level)
+}</span>
+
+func (l *Logger) WithField(field string, value any) *Logger <span class="cov8" title="1">{
+        return &amp;Logger{
+                Entry: l.Entry.WithField(field, value),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package models
+
+type SecretMethod string
+
+var (
+        BCRYPT SecretMethod = "bcrypt"
+)
+
+type Secret struct {
+        ID     uint64       `json:"id" db:"id"`
+        UserID uint64       `json:"user_id" db:"user_id"`
+        Key    string       `json:"key" db:"key"`
+        Value  string       `json:"value"`
+        Method SecretMethod `json:"method" db:"method"`
+        Hash   []byte       `json:"-" db:"hash"`
+}
+
+func (s *Secret) Hide(value, hash bool) <span class="cov0" title="0">{
+        if value </span><span class="cov0" title="0">{
+                s.Value = ""
+        }</span>
+        <span class="cov0" title="0">if hash </span><span class="cov0" title="0">{
+                s.Hash = nil
+        }</span>
+}
+
+type KeyValue struct {
+        Key   string `json:"key"`
+        Value string `json:"value"`
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package kafka
+
+import (
+        "context"
+        "errors"
+        "io"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+
+        "github.com/segmentio/kafka-go"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/logging"
+)
+
+type Message struct {
+        *kafka.Message
+}
+
+type MessageHandler func(*Message) error
+type TopicToConsumer map[string]func(l *logging.Logger, conf *Config, topic string)
+
+func StartConsuming(l *logging.Logger, conf *Config, topicToConsumer TopicToConsumer) <span class="cov0" title="0">{
+        for topic, startFactConsumerFunction := range topicToConsumer </span><span class="cov0" title="0">{
+                for range conf.Consumer.ConsumersAmount </span><span class="cov0" title="0">{
+                        l.Infof("start consuming, groupsID:%s", conf.Consumer.Group)
+                        go startFactConsumerFunction(l, conf, topic)
+                }</span>
+        }
+}
+
+func ConsumeMessages(l *logging.Logger, conf *Config, topic string, msgHandler MessageHandler) <span class="cov0" title="0">{
+        r := kafka.NewReader(kafka.ReaderConfig{
+                Brokers:  conf.Brokers,
+                Topic:    topic,
+                GroupID:  conf.Consumer.Group,
+                MaxWait:  500 * time.Millisecond,
+                MinBytes: 1,
+                MaxBytes: 10_000,
+        })
+
+        ch := make(chan os.Signal, 1)
+        signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
+        go func() </span><span class="cov0" title="0">{
+                &lt;-ch
+                if err := r.Close(); err != nil </span><span class="cov0" title="0">{
+                        l.Errorf("could not close kafka reader. err: %s)", err)
+                }</span>
+        }()
+
+        <span class="cov0" title="0">for </span><span class="cov0" title="0">{
+                rawMsg, err := r.ReadMessage(context.Background())
+                if err != nil </span><span class="cov0" title="0">{
+                        if errors.Is(err, io.EOF) </span><span class="cov0" title="0">{
+                                _ = r.CommitMessages(context.Background(), rawMsg)
+                        }</span>
+                        <span class="cov0" title="0">continue</span>
+                }
+                <span class="cov0" title="0">if rawMsg.Value != nil </span><span class="cov0" title="0">{
+                        err = msgHandler(&amp;Message{&amp;rawMsg})
+                        if err != nil </span><span class="cov0" title="0">{
+                                l.Errorf("could not handle kafka message. err: %s)", err)
+                        }</span>
+                }
+        }
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package kafka_mock
+
+import (
+        "context"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+        "github.com/Oxygenta-Team/FortiKey/pkg/queue"
+)
+
+type ProducerMock struct {
+        errorToReturn error
+}
+
+func NewProducerMock(errorToReturn error) queue.Producer <span class="cov8" title="1">{
+        return &amp;ProducerMock{errorToReturn: errorToReturn}
+}</span>
+
+func (p *ProducerMock) ProduceMessages(ctx context.Context, rawMessages []*models.KafkaMessage) error <span class="cov8" title="1">{
+        return p.errorToReturn
+}</span>
+
+func (p *ProducerMock) Close() error <span class="cov0" title="0">{
+        return p.errorToReturn
+}</span>
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package kafka
+
+import (
+        "context"
+        "encoding/json"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/models"
+
+        "github.com/segmentio/kafka-go"
+)
+
+type Producer struct {
+        kafkaWriter *kafka.Writer
+}
+
+func NewProducer(config *Config) *Producer <span class="cov0" title="0">{
+        return &amp;Producer{kafkaWriter: &amp;kafka.Writer{
+                Addr:  kafka.TCP(config.Brokers...),
+                Topic: config.Producer.Topic,
+
+                MaxAttempts:  30,
+                Balancer:     &amp;kafka.LeastBytes{},
+                RequiredAcks: kafka.RequireAll,
+                Compression:  kafka.Snappy,
+        }}
+}</span>
+
+func (producer *Producer) ProduceMessages(ctx context.Context, rawMessages []*models.KafkaMessage) error <span class="cov0" title="0">{
+        messages := make([]kafka.Message, len(rawMessages))
+        for i, value := range rawMessages </span><span class="cov0" title="0">{
+                m, err := json.Marshal(value)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov0" title="0">messages[i] = kafka.Message{
+                        Value: m,
+                }</span>
+        }
+
+        <span class="cov0" title="0">return producer.kafkaWriter.WriteMessages(ctx, messages...)</span>
+}
+
+func (producer *Producer) Close() error <span class="cov0" title="0">{
+        return producer.kafkaWriter.Close()
+}</span>
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+)
+
+func ReturnError(w http.ResponseWriter, status int, err error) <span class="cov8" title="1">{
+        ResponseJSON(w, status, &amp;Error{
+                Status:  status,
+                Message: err.Error(),
+        })
+}</span>
+
+func ResponseJSON(w http.ResponseWriter, status int, data any) <span class="cov8" title="1">{
+        b, err := json.Marshal(data)
+        if err != nil </span><span class="cov0" title="0">{
+                http.Error(
+                        w,
+                        http.StatusText(http.StatusInternalServerError),
+                        http.StatusInternalServerError,
+                )
+        }</span>
+
+        <span class="cov8" title="1">Respond(w, status, b)</span>
+}
+
+func Respond(w http.ResponseWriter, code int, b []byte) <span class="cov8" title="1">{
+        w.Header().Add("Content-Type", "application/json")
+        w.WriteHeader(code)
+        w.Write(b)
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package testassets
+
+import (
+        "errors"
+        "fmt"
+        "os"
+
+        "github.com/golang-migrate/migrate/v4"
+        "github.com/ory/dockertest/v3"
+        "github.com/ory/dockertest/v3/docker"
+
+        "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
+
+        _ "github.com/golang-migrate/migrate/v4/database/postgres"
+        _ "github.com/golang-migrate/migrate/v4/source/file"
+)
+
+func buildDBURL(resource *dockertest.Resource, serviceName string) string <span class="cov8" title="1">{
+        return fmt.Sprintf("postgres://dev:12345@%v/%s?sslmode=disable", resource.GetHostPort("5432/tcp"), serviceName)
+}</span>
+
+func getPostgresContainerConfig(serviceName string) *dockertest.RunOptions <span class="cov8" title="1">{
+        return &amp;dockertest.RunOptions{
+                Repository: "postgres",
+                Tag:        "14.4",
+                Env: []string{
+                        "POSTGRES_USER=dev",
+                        "POSTGRES_PASSWORD=12345",
+                        fmt.Sprintf("POSTGRES_DB=%s", serviceName),
+                        "listen_addresses = '*'",
+                },
+        }
+}</span>
+
+func startPostgresContainer(pool *dockertest.Pool, serviceName string) (*dockertest.Resource, error) <span class="cov8" title="1">{
+        runOptions := getPostgresContainerConfig(serviceName)
+
+        resource, err := pool.RunWithOptions(runOptions, func(config *docker.HostConfig) </span><span class="cov8" title="1">{
+                config.AutoRemove = true
+                config.RestartPolicy = docker.RestartPolicy{Name: "no"}
+        }</span>)
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("could not start PostgreSQL container. err: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return resource, nil</span>
+}
+
+func getMigrationsDir() (string, error) <span class="cov8" title="1">{
+        _, err := os.Stat("../migrations")
+        if err == nil </span><span class="cov8" title="1">{
+                return "../migrations", nil
+        }</span>
+
+        <span class="cov8" title="1">if os.IsNotExist(err) </span><span class="cov8" title="1">{
+                return "../repository/postgres/migrations", nil
+        }</span>
+
+        <span class="cov0" title="0">return "", fmt.Errorf("could not check migrations directory. err: %w", err)</span>
+}
+
+func applyMigrations(migrations, dbURL string) error <span class="cov8" title="1">{
+        migration, err := migrate.New("file://"+migrations, dbURL)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("could not open migration sources. err: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">if err = migration.Up(); err != nil &amp;&amp; !errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
+                return fmt.Errorf("could not apply migrations. err: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func CreateDockerDB(name string) (*postgres.Storage, error) <span class="cov8" title="1">{
+        pool, err := dockertest.NewPool("")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error during creating pool, err: %s", err)
+        }</span>
+
+        <span class="cov8" title="1">rs, err := startPostgresContainer(pool, name)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error during creating container, err: %s, name: %s", err, name)
+        }</span>
+        <span class="cov8" title="1">dbUrl := buildDBURL(rs, name)
+
+        var db *postgres.Storage
+        if err := pool.Retry(func() error </span><span class="cov8" title="1">{
+                db, err = postgres.CreateStorageByURL(dbUrl)
+                if err != nil </span><span class="cov8" title="1">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">return db.Ping()</span>
+        }); err != nil <span class="cov0" title="0">{
+                return nil, fmt.Errorf("error during connecting to container, err: %s, name: %s", err, name)
+        }</span>
+
+        <span class="cov8" title="1">migrationsDir, err := getMigrationsDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">if err = applyMigrations(migrationsDir, dbUrl); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("could not apply migrations. err: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return db, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package testassets
+
+import "encoding/json"
+
+func Marshal(dest any) (b []byte) <span class="cov8" title="1">{
+        b, _ = json.Marshal(dest)
+        return
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

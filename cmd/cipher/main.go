@@ -2,15 +2,17 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net/http"
+
+	"github.com/sirupsen/logrus"
+
 	"github.com/Oxygenta-Team/FortiKey/pkg/cfg"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/repository/postgres"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/router"
 	"github.com/Oxygenta-Team/FortiKey/pkg/cipher/services"
 	"github.com/Oxygenta-Team/FortiKey/pkg/logging"
 	"github.com/Oxygenta-Team/FortiKey/pkg/queue/kafka"
-	"github.com/sirupsen/logrus"
-	"log"
-	"net/http"
 
 	pg "github.com/Oxygenta-Team/FortiKey/pkg/db/postgres"
 )
@@ -35,7 +37,6 @@ func main() {
 		return
 	}
 
-	logrus.Printf("%+v", config)
 	level, err := logging.ParseLevel(config.LogLevel)
 	if err != nil {
 		log.Fatalf("Failed to parse logging level. Err: %v", err)
