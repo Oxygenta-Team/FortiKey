@@ -58,9 +58,9 @@ services:
     ports:
       - 5431:5432
 
-  user_db:
+  user_management_postgres:
     image: postgres:16.7-alpine3.20
-    container_name: user-management-postgres
+    container_name: user_management_postgres
     restart: on-failure:5
     environment:
       POSTGRES_USER: postgres
